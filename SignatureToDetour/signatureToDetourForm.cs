@@ -113,7 +113,7 @@ namespace SignatureToDetour
             out_detour += Environment.NewLine;
             out_detour += Environment.NewLine;
 
-            out_detour += "original" + desired_name + " = (" + return_type + "(" + cdecl_part + "*)(" + argtypes + "))DetourFunction((PBYTE)UNK_ADDRESS, (PBYTE)hk" + desired_name + ");";
+            out_detour += "original" + desired_name + " = (" + return_type + "(" + cdecl_part + "*)(" + argtypes + "))DetourFunction((PBYTE)" + desired_name.ToUpper() + "_ADDRESS, (PBYTE)hk" + desired_name + ");";
 
             out_detour = out_detour.Replace("_BYTE", "BYTE");
 
