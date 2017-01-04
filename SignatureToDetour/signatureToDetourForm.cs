@@ -40,7 +40,7 @@ namespace SignatureToDetour
                 string desired_name = sig.name;
                 if (desired_name.Length == 0)
                 { 
-                    desired_name = "Unk" + counter.ToString();
+                    desired_name = "Unknown" + counter.ToString();
                     counter++;
                 }
 
@@ -81,7 +81,7 @@ namespace SignatureToDetour
                 string return_type = "";
 
                 if (cdecl_loc >= 0)
-                    return_type = signature.Substring(0, cdecl_loc - 1);
+                    return_type = signature.Substring(0, cdecl_loc);
                 else
                     return_type = signature.Substring(0, signature.IndexOf("sub"));
 
@@ -102,7 +102,13 @@ namespace SignatureToDetour
                     foreach (string a in arglist)
                     {
 
-                        string type = a.Substring(0, a.Length - 2);
+                        int indx = -1;
+                        bool has_dual_pointer = a.IndexOf("**") >= 0;
+                        bool has_single_pointer = (a.IndexOf('*') >= 0 && !has_dual_pointer);
+
+                        indx = has_dual_pointer ? a.IndexOf("**") + 2 : has_single_pointer ? a.IndexOf('*') + 1 : a.IndexOf(' ');
+                        string type = a.Substring(0, indx);
+
                         type = type.Trim();
                         if (a == last)
                             out_detour += type + ");";
@@ -178,7 +184,7 @@ namespace SignatureToDetour
         private void addSignatureBtn_Click(object sender, EventArgs e)
         {
             Signature sig = new Signature();
-            sig.name = functionNameTextBox.Text.Length > 0 ? functionNameTextBox.Text : "unkFunction";
+            sig.name = functionNameTextBox.Text;
             sig.signature = functionSignatureTextBox.Text;
 
             signatures.Add(sig);
