@@ -8,7 +8,7 @@ Given a signature like the following from IDA Pro:
 char __cdecl sub_1193D40(int a1, unsigned int a2, signed int *a3, _BYTE **a4, const char *a5)
 ```
 
-SignatureToDetour will output the following:
+SignatureToDetour will output:
 
 ```cpp
 #define INTERNALFUNCTION_ADDRESS 0x1193D40
