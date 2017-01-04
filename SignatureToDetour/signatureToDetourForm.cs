@@ -112,12 +112,15 @@ namespace SignatureToDetour
                         string type = a.Substring(0, indx == 0 ? a.Length : indx);
 
                         type = type.Trim();
-                        if (a == last)
+
+                        string tmp = a.Trim();
+
+                        if (tmp == last)
                             out_detour += type + ");";
                         else
                             out_detour += type + ", ";
 
-                        if (a == last)
+                        if (tmp == last)
                             argtypes += type;
                         else
                             argtypes += type + ", ";
@@ -153,8 +156,14 @@ namespace SignatureToDetour
                 {
                     foreach (string a in arglist)
                     {
-                        string argname = a.Substring(a.Length - 2);
+                        int indx = -1;
+                        bool has_dual_pointer = a.IndexOf("**") >= 0;
+                        bool has_single_pointer = (a.IndexOf('*') >= 0 && !has_dual_pointer);
 
+                        indx = has_dual_pointer ? a.IndexOf("**") + 2 : has_single_pointer ? a.IndexOf('*') + 1 : a.LastIndexOf(' ');
+                        string argname = a.Substring(indx == 0 ? a.Length : indx);
+
+                        argname = argname.Trim();
                         string tmp = a.Trim();
                         if (tmp == last)
                             out_detour += argname + ");";
