@@ -85,6 +85,8 @@ namespace SignatureToDetour
                 else
                     return_type = signature.Substring(0, signature.IndexOf("sub"));
 
+                return_type = return_type.Trim();
+
                 out_detour = address;
 
                 out_detour = "#define " + desired_name.ToUpper() + "_ADDRESS 0x" + address + Environment.NewLine; // Address of function to hook
@@ -93,6 +95,7 @@ namespace SignatureToDetour
                 out_detour += "original" + desired_name + ")(";
 
                 string last = arglist.Last();
+                last = last.Trim();
 
                 string argtypes = "";
                 if (arglist.Length == 1 && arglist[0].Length == 0)                
@@ -100,14 +103,13 @@ namespace SignatureToDetour
                 else
                 {
                     foreach (string a in arglist)
-                    {
-
+                    {                        
                         int indx = -1;
                         bool has_dual_pointer = a.IndexOf("**") >= 0;
                         bool has_single_pointer = (a.IndexOf('*') >= 0 && !has_dual_pointer);
 
-                        indx = has_dual_pointer ? a.IndexOf("**") + 2 : has_single_pointer ? a.IndexOf('*') + 1 : a.IndexOf(' ');
-                        string type = a.Substring(0, indx);
+                        indx = has_dual_pointer ? a.IndexOf("**") + 2 : has_single_pointer ? a.IndexOf('*') + 1 : a.LastIndexOf(' ');
+                        string type = a.Substring(0, indx == 0 ? a.Length : indx);
 
                         type = type.Trim();
                         if (a == last)
@@ -133,10 +135,11 @@ namespace SignatureToDetour
                 {
                     foreach (string a in arglist)
                     {
-                        if (a == last)
-                            out_detour += a + ")";
+                        string tmp = a.Trim();
+                        if (tmp == last)
+                            out_detour += tmp + ")";
                         else
-                            out_detour += a + ", ";
+                            out_detour += tmp + ", ";
                     }
                 }
 
@@ -152,7 +155,8 @@ namespace SignatureToDetour
                     {
                         string argname = a.Substring(a.Length - 2);
 
-                        if (a == last)
+                        string tmp = a.Trim();
+                        if (tmp == last)
                             out_detour += argname + ");";
                         else
                             out_detour += argname + ", ";
